@@ -79,19 +79,34 @@ public class CollectionDemoActivity extends ActionBarActivity {
                 // This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
-                Intent upIntent = new Intent(this, MainActivity.class);
+                //Intent upIntent = new Intent(this, MainActivity.class);
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    /*
                     // This activity is not part of the application's task, so create a new task
                     // with a synthesized back stack.
                     TaskStackBuilder.from(this)
                             // If there are ancestor activities, they should be added here.
                             .addNextIntent(upIntent)
                             .startActivities();
+                    */
+                    // This activity is NOT part of this application's task, so create a new task
+                    // when navigating up, with a synthesized back stack.
+                    TaskStackBuilder.create(this)
+                            // Add all of this activity's parents to the back stack
+                            .addNextIntentWithParentStack(upIntent)
+                            // Navigate up to the closest parent
+                            .startActivities();
                     finish();
                 } else {
+                    /*
                     // This activity is part of the application's task, so simply
                     // navigate up to the hierarchical parent activity.
                     NavUtils.navigateUpTo(this, upIntent);
+                    */
+                    // This activity is part of this application's task, so simply
+                    // navigate up to the logical parent activity.
+                    NavUtils.navigateUpFromSameTask(this);
                 }
                 return true;
         }
